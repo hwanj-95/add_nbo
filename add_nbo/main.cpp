@@ -18,32 +18,60 @@ void dump(void* p, size_t n) {
     printf("\n");
 }
 
-void write_0x12345678() {
-    uint32_t total;
-    uint32_t num1;
-    FILE* file1;
-    file1 = fopen("/tmp/qt-ex/add_nbo/thousand.bin","rb");
-    if(file1 == NULL){
-        printf("error");
-    }
-    fread(&num1, 4, 1, file1);
-//    printf("0x%04x\n", ntohl(num1));
-    fclose(file1);
+void add_nbo() {
+    uint32_t total; //file1 + file2 value
+    uint32_t num1; //file1 value 16
+    uint32_t num2; //file2 value 16
+    uint32_t change1; //LE > BE
+    uint32_t change2; //LE > BE
+    FILE* file1; // file1 open pointer
+    FILE* file2; // file2 open pointer
+    file1 = fopen("./thousand.bin","rb"); // file1 open
+    file2 = fopen("./five-hundred.bin","rb");// file2 open
 
-    uint32_t num2;
-    FILE* file2;
-    file2 = fopen("/tmp/qt-ex/add_nbo/five-hundred.bin","rb");
-    if(file2 == NULL){
-        printf("error");
+    if(file1 == NULL || file2 == NULL) {
+        printf("error\n");
+        exit(1);
     }
-    fread(&num2, 4, 1, file2);
-//    printf("0x%04x\n", ntohl(num2));
+
+    fread(&num1, sizeof(uint32_t), 1, file1); //read file1
+    fread(&num2, sizeof(uint32_t), 1, file2); //read file2
+
+    change1 = ntohl(num1); //LE > BE
+    change2 = ntohl(num2); //LE > BE
+
+    total = change1+change2; // total
+    printf("%d(0x%04x) + %d(0x%04x) = %d(0x%04x)\n",change1, change1, change2, change2, total,total);
+
+    fclose(file1);
     fclose(file2);
 
-    total = ntohl(num1)+ntohl(num2); // total
-    printf("%d(0x%04x) + %d(0x%04x) = %d(0x%04x)\n",ntohl(num1), ntohl(num1),ntohl(num2), ntohl(num2), total,total);
 }
 
 int main() {
-    write_0x12345678();
+    add_nbo();
 }
+
+
+
+
+
+//    if(ntohl(num1) == 0 ){
+//        printf("error1\n");
+//        exit(1);
+//    }
+//    printf("0x%04x\n", ntohl(num1));
+//    fclose(file1);
+
+//    file2 = fopen("/home/hwan95/add_nbo/add_nbo/five-hundred.bin","rb");
+//    if(file2 == NULL){
+//        printf("error2\n");
+//        exit(1);
+//    }
+//    fread(&num2, 4, 1, file2);
+//    printf("0x%04x\n", ntohl(num2));
+//    fclose(file2);
+
+//    total = ntohl(num1)+ntohl(num2); // total
+//    printf("%d(0x%04x) + %d(0x%04x) = %d(0x%04x)\n",ntohl(num1), ntohl(num1),ntohl(num2), ntohl(num2), total,total);
+//}
